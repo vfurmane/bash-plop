@@ -56,6 +56,7 @@ vf_end()
 		vf_fatal_error "VF test framework not initialized..."
 	fi
 	exec 1>&3
+	printf "\n"
 	[ $TESTS_OK -gt 0 ] && printf "${GREEN}$TESTS_OK OK${RESET_COLOR}"
 	[ $TESTS_OK -gt 0 ] && [ $TESTS_KO -gt 0 ] && printf " - "
 	[ $TESTS_KO -gt 0 ] && printf "${RED}$TESTS_KO KO${RESET_COLOR}"
@@ -63,7 +64,7 @@ vf_end()
 	[ $TESTS_LK -gt 0 ] && printf "${RED}$TESTS_LK LK${RESET_COLOR}"
 	([ $TESTS_OK -gt 0 ] || [ $TESTS_KO -gt 0 ] || [ $TESTS_LK -gt 0 ]) && [ $TESTS_TO -gt 0 ] && printf " - "
 	[ $TESTS_TO -gt 0 ] && printf "${RED}$TESTS_TO TO${RESET_COLOR}"
-	
+	printf "\n\n"
 	if [ $TESTS_KO -eq 0 ] && [ $TESTS_LK -eq 0 ] && [ $TESTS_TO -eq 0 ]
 	then
 		exit 0
@@ -130,13 +131,13 @@ vf_test_summary()
 	fi
 	case $VF_TEST_RESULT in
 		"OK")
-			TEST_OK=$(($TEST_OK + 1));;
+			TESTS_OK=$(($TEST_OK + 1));;
 		"KO")
-			TEST_KO=$(($TEST_KO + 1));;
+			TESTS_KO=$(($TEST_KO + 1));;
 		"LK")
-			TEST_LK=$(($TEST_LK + 1));;
+			TESTS_LK=$(($TEST_LK + 1));;
 		"TO")
-			TEST_TO=$(($TEST_TO + 1));;
+			TESTS_TO=$(($TEST_TO + 1));;
 	esac
 	if [ -z "$VF_SKIP" ] || [ $VF_SKIP -eq 0 ]
 	then
