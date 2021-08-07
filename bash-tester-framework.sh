@@ -42,8 +42,8 @@ vf_init()
 	TEST_NUM=0
 	VF_LINE_LENGTH=80
 	VF_MIN_NUM_LENGTH=2
-	LEAK_CMD=""
-	TIMEOUT_SECONDS=5
+	VF_LEAK_CMD=""
+	VF_TIMEOUT_SECONDS=5
 	exec 3>&1
 }
 
@@ -72,7 +72,7 @@ vf_end()
 
 vf_wait_for_timeout()
 {
-	sleep $TIMEOUT_SECONDS
+	sleep $VF_TIMEOUT_SECONDS
 	if kill -0 $1 > /dev/null 2>&1
 	then
 		kill $1
@@ -82,7 +82,7 @@ vf_wait_for_timeout()
 
 vf_timeout_test()
 {
-	if [ $TIMEOUT_SECONDS -gt 0 ]
+	if [ $VF_TIMEOUT_SECONDS -gt 0 ]
 	then
 		$@ &
 		bg_process=$!
@@ -116,7 +116,7 @@ vf_test_command()
 	VF_EXIT_STATUS=0
 	if ([ -z "$VF_SKIP" ] || [ $VF_SKIP -eq 0 ]) && ! [ -z "$1" ]
 	then
-		vf_timeout_test $LEAK_CMD $1
+		vf_timeout_test $VF_LEAK_CMD $@
 	fi
 	return $VF_EXIT_STATUS
 }
