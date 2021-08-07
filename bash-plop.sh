@@ -131,13 +131,13 @@ vf_test_summary()
 	fi
 	case $VF_TEST_RESULT in
 		"OK")
-			TESTS_OK=$(($TEST_OK + 1));;
+			TESTS_OK=$(($TESTS_OK + 1));;
 		"KO")
-			TESTS_KO=$(($TEST_KO + 1));;
+			TESTS_KO=$(($TESTS_KO + 1));;
 		"LK")
-			TESTS_LK=$(($TEST_LK + 1));;
+			TESTS_LK=$(($TESTS_LK + 1));;
 		"TO")
-			TESTS_TO=$(($TEST_TO + 1));;
+			TESTS_TO=$(($TESTS_TO + 1));;
 	esac
 	if [ -z "$VF_SKIP" ] || [ $VF_SKIP -eq 0 ]
 	then
