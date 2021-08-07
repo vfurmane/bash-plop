@@ -39,7 +39,8 @@ vf_init()
 	TESTS_KO=0
 	TESTS_LK=0
 	TESTS_TO=0
-	TEST_NUM=0
+	VF_TEST_NUM=1
+	VF_TEST_OUTPUT="> /dev/null 2>&1"
 	VF_LINE_LENGTH=80
 	VF_MIN_NUM_LENGTH=2
 	VF_LEAK_CMD=""
@@ -107,12 +108,11 @@ vf_test_command()
 	then
 		vf_fatal_error "VF test framework not initialized..."
 	fi
-	TEST_NUM=$(($TEST_NUM + 1))
-	printf "${BLUE}# %0*d: %-*s  []${RESET_COLOR}" $VF_MIN_NUM_LENGTH $TEST_NUM $(($VF_LINE_LENGTH - 9 - $VF_MIN_NUM_LENGTH)) "$VF_DESCRIPTION"
+	printf "${BLUE}# %0*d: %-*s  []${RESET_COLOR}" $VF_MIN_NUM_LENGTH $VF_TEST_NUM $(($VF_LINE_LENGTH - 9 - $VF_MIN_NUM_LENGTH)) "$VF_DESCRIPTION"
 	VF_EXIT_STATUS=0
 	if ([ -z "$VF_SKIP" ] || [ $VF_SKIP -eq 0 ]) && [ $# -gt 0 ]
 	then
-		vf_timeout_test $VF_LEAK_CMD $@ > /dev/null 2>&1
+		vf_timeout_test $VF_LEAK_CMD $@ > $VF_TEST_OUTPUT 2>&1
 	fi
 	return $VF_EXIT_STATUS
 }
@@ -140,10 +140,12 @@ vf_test_summary()
 	esac
 	if [ -z "$VF_SKIP" ] || [ $VF_SKIP -eq 0 ]
 	then
-		printf "\r${VF_RESULT_COLOR}# %0*d: %-*s [%s]\n${RESET_COLOR}" $VF_MIN_NUM_LENGTH $TEST_NUM $(($VF_LINE_LENGTH - 9 - $VF_MIN_NUM_LENGTH)) "$VF_DESCRIPTION" "$VF_TEST_RESULT"
+		printf "\r${VF_RESULT_COLOR}# %0*d: %-*s [%s]\n${RESET_COLOR}" $VF_MIN_NUM_LENGTH $VF_TEST_NUM $(($VF_LINE_LENGTH - 9 - $VF_MIN_NUM_LENGTH)) "$VF_DESCRIPTION" "$VF_TEST_RESULT"
 	else
 		printf "\n"
 	fi
+	VF_TEST_NUM=$(($VF_TEST_NUM + 1))
+	VF_TEST_OUTPUT="> /dev/null 2>&1"
 	VF_DESCRIPTION=""
 	VF_SKIP=0
 	VF_TIMED_OUT=0
