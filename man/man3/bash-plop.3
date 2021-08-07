@@ -1,0 +1,35 @@
+.TH	BASH-PLOP 3 2021-08-07
+.SH NAME
+bash-plop
+-
+A bash testing framework suitable for 42 Projects.
+.SH	SYNOPSIS
+.nf
+.B	vf_init
+.fi
+.nf
+.B	vf_end
+.fi
+.BI	"vf_test_command " command
+.nf
+.B	vf_test_summary
+.fi
+.SH	DESCRIPTION
+.TP
+.B	vf_init
+This function should be called first. It initializes all needed variables.
+.TP
+.B	vf_end
+This function should be called at the end of all tests.
+It prints a summary of all tests.
+.TP
+.B	vf_test_command
+This function prints a \fIdescription\fR
+and executes the \fIcommand\fR passed in argument.
+The \fIdescription\fR can be passed using the variable \fBVF_DESCRIPTION\fR.
+The function returns the exit status of the executed command,
+and also stores it in the variable \fBVF_EXIT_STATUS\fR.
+.TP
+.B	vf_test_summary
+This function prints a summary of the previously executed command
+(if it failed or not).

@@ -23,7 +23,7 @@ vf_fatal_error()
 	else
 		exit_status=$2
 	fi
-	printf "${RED}$message${NC}\n"
+	printf "${RED}$message${RESET_COLOR}\n"
 	exit $exit_status
 }
 
@@ -44,6 +44,7 @@ vf_init()
 	VF_MIN_NUM_LENGTH=2
 	VF_LEAK_CMD=""
 	VF_TIMEOUT_SECONDS=5
+	VF_TIMED_OUT=0
 	exec 3>&1
 }
 
@@ -54,13 +55,13 @@ vf_end()
 		vf_fatal_error "VF test framework not initialized..."
 	fi
 	exec 1>&3
-	[ $TESTS_OK -gt 0 ] && printf "${GREEN}$TESTS_OK OK${NC}"
+	[ $TESTS_OK -gt 0 ] && printf "${GREEN}$TESTS_OK OK${RESET_COLOR}"
 	[ $TESTS_OK -gt 0 ] && [ $TESTS_KO -gt 0 ] && printf " - "
-	[ $TESTS_KO -gt 0 ] && printf "${RED}$TESTS_KO KO${NC}"
+	[ $TESTS_KO -gt 0 ] && printf "${RED}$TESTS_KO KO${RESET_COLOR}"
 	([ $TESTS_OK -gt 0 ] || [ $TESTS_KO -gt 0 ]) && [ $TESTS_LK -gt 0 ] && printf " - "
-	[ $TESTS_LK -gt 0 ] && printf "${RED}$TESTS_LK LK${NC}"
+	[ $TESTS_LK -gt 0 ] && printf "${RED}$TESTS_LK LK${RESET_COLOR}"
 	([ $TESTS_OK -gt 0 ] || [ $TESTS_KO -gt 0 ] || [ $TESTS_LK -gt 0 ]) && [ $TESTS_TO -gt 0 ] && printf " - "
-	[ $TESTS_TO -gt 0 ] && printf "${RED}$TESTS_TO TO${NC}"
+	[ $TESTS_TO -gt 0 ] && printf "${RED}$TESTS_TO TO${RESET_COLOR}"
 	
 	if [ $TESTS_KO -eq 0 ] && [ $TESTS_LK -eq 0 ] && [ $TESTS_TO -eq 0 ]
 	then
@@ -76,7 +77,6 @@ vf_wait_for_timeout()
 	if kill -0 $1 > /dev/null 2>&1
 	then
 		kill $1
-		VF_TIMED_OUT=1
 	fi
 }
 
@@ -92,11 +92,12 @@ vf_timeout_test()
 		$@
 	fi
 	VF_EXIT_STATUS=$?
-	if [ -z "$VF_TIMED_OUT" ] || [ $VF_TIMED_OUT -eq 0 ]
+	if [ $VF_EXIT_STATUS -eq 143 ]
 	then
-		return 0
-	else
+		VF_TIMED_OUT=1
 		return 1
+	else
+		return 0
 	fi
 }
 
@@ -107,16 +108,11 @@ vf_test_command()
 		vf_fatal_error "VF test framework not initialized..."
 	fi
 	TEST_NUM=$(($TEST_NUM + 1))
-	min_num_length=${#TEST_NUM}
-	if ! [ -z "$VF_MIN_NUM_LENGTH" ] && [ $VF_MIN_NUM_LENGTH -ge $min_num_length ]
-	then
-		min_num_length=$VF_MIN_NUM_LENGTH
-	fi
-	printf "${BLUE}# %0*d: %-*s  []${NC}" $VF_MIN_NUM_LENGTH $TEST_NUM $(($VF_LINE_LENGTH - 9 - $VF_MIN_NUM_LENGTH)) "$VF_DESCRIPTION"
+	printf "${BLUE}# %0*d: %-*s  []${RESET_COLOR}" $VF_MIN_NUM_LENGTH $TEST_NUM $(($VF_LINE_LENGTH - 9 - $VF_MIN_NUM_LENGTH)) "$VF_DESCRIPTION"
 	VF_EXIT_STATUS=0
-	if ([ -z "$VF_SKIP" ] || [ $VF_SKIP -eq 0 ]) && ! [ -z "$1" ]
+	if ([ -z "$VF_SKIP" ] || [ $VF_SKIP -eq 0 ]) && [ $# -gt 0 ]
 	then
-		vf_timeout_test $VF_LEAK_CMD $@
+		vf_timeout_test $VF_LEAK_CMD $@ > /dev/null 2>&1
 	fi
 	return $VF_EXIT_STATUS
 }
@@ -127,7 +123,7 @@ vf_test_summary()
 	then
 		if [ -z "$VF_TEST_RESULT" ] || [ "$VF_TEST_RESULT" = "OK" ]
 		then
-		VF_RESULT_COLOR=$GREEN
+			VF_RESULT_COLOR=$GREEN
 		else
 			VF_RESULT_COLOR=$RED
 		fi
@@ -144,7 +140,7 @@ vf_test_summary()
 	esac
 	if [ -z "$VF_SKIP" ] || [ $VF_SKIP -eq 0 ]
 	then
-		printf "\r${VF_RESULT_COLOR}# %0*d: %-*s [%s]\n${NC}" $VF_MIN_NUM_LENGTH $TEST_NUM $(($VF_LINE_LENGTH - 9 - $VF_MIN_NUM_LENGTH)) "$VF_DESCRIPTION" "$VF_TEST_RESULT"
+		printf "\r${VF_RESULT_COLOR}# %0*d: %-*s [%s]\n${RESET_COLOR}" $VF_MIN_NUM_LENGTH $TEST_NUM $(($VF_LINE_LENGTH - 9 - $VF_MIN_NUM_LENGTH)) "$VF_DESCRIPTION" "$VF_TEST_RESULT"
 	else
 		printf "\n"
 	fi
