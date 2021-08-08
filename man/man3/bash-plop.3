@@ -55,10 +55,11 @@ The prefix command in front of the the tested one.
 The main purpose is to use a program like \fIvalgrind\fR to check leaks.
 .TP
 .B	PLOP_LINE_LENGTH
-The length of the description line.
+The length of the description line. By default, it is set to 80.
 .TP
 .B	PLOP_MIN_NUM_LENGHT
 The minimum length of the displayed test number on the description line.
+By default, it is set to 2.
 .TP
 .B	PLOP_RESULT_COLOR
 The color (in ANSI escape codes) in which the test result will be outputed.
@@ -84,3 +85,4 @@ The test result. It should be one of these "OK", "KO",
 .B	PLOP_TIMEOUT_SECONDS
 The time in seconds after which the test is killed.
 If set to 0, the test will never be killed.
+By default, it is set to 5.
