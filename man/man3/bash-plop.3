@@ -27,6 +27,7 @@ It prints a summary of all tests.
 This function prints a \fIdescription\fR
 and executes the \fIcommand\fR passed in argument.
 The \fIdescription\fR can be passed using the variable \fBPLOP_DESCRIPTION\fR.
+If the user defined a \fIplop_setup\fR function, it will be called first.
 The function returns the exit status of the executed command,
 and also stores it in the variable \fBPLOP_EXIT_STATUS\fR.
 If the test times out, the variable \fBPLOP_TIMED_OUT\fR will be set to 1.
@@ -40,6 +41,8 @@ without actually executing the test suite.
 .B	plop_test_summary
 This function prints a summary of the previously executed command
 (if it failed or not).
+If the user defined a \fIplop_teardown\fR function,
+it will be called at the end.
 If the variable \fBPLOP_SKIP\fR is set to 1, you should still call this function
 to reset the test and print a newline.
 .SH	ENVIRONMENT

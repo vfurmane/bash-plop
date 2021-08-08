@@ -110,6 +110,7 @@ plop_test_command()
 		plop_fatal_error "VF test framework not initialized..."
 	fi
 	printf "${BLUE}# %0*d: %-*s  []${RESET_COLOR}" $PLOP_MIN_NUM_LENGTH $PLOP_TEST_NUM $(($PLOP_LINE_LENGTH - 9 - $PLOP_MIN_NUM_LENGTH)) "$PLOP_DESCRIPTION"
+	command -v plop_setup > /dev/null 2>&1 && plop_setup
 	PLOP_EXIT_STATUS=0
 	if ([ -z "$PLOP_SKIP" ] || [ $PLOP_SKIP -eq 0 ]) && [ $# -gt 0 ]
 	then
@@ -150,6 +151,7 @@ plop_test_summary()
 	else
 		printf "\n"
 	fi
+	command -v plop_teardown > /dev/null 2>&1 && plop_teardown
 	PLOP_TEST_NUM=$(($PLOP_TEST_NUM + 1))
 	PLOP_TEST_OUTPUT="> /dev/null 2>&1"
 	PLOP_DESCRIPTION=""
