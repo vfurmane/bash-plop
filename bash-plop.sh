@@ -120,27 +120,32 @@ plop_test_command()
 
 plop_test_summary()
 {
-	if [ -z "$PLOP_RESULT_COLOR" ]
-	then
-		if [ -z "$PLOP_TEST_RESULT" ] || [ "$PLOP_TEST_RESULT" = "OK" ]
-		then
-			PLOP_RESULT_COLOR=$GREEN
-		else
-			PLOP_RESULT_COLOR=$RED
-		fi
-	fi
-	case $PLOP_TEST_RESULT in
-		"OK")
-			TESTS_OK=$(($TESTS_OK + 1));;
-		"KO")
-			TESTS_KO=$(($TESTS_KO + 1));;
-		"LK")
-			TESTS_LK=$(($TESTS_LK + 1));;
-		"TO")
-			TESTS_TO=$(($TESTS_TO + 1));;
-	esac
 	if [ -z "$PLOP_SKIP" ] || [ $PLOP_SKIP -eq 0 ]
 	then
+		if [ -z "$PLOP_TIMED_OUT" ] || [ $PLOP_TIMED_OUT -eq 0 ]
+		then
+			if [ -z "$PLOP_RESULT_COLOR" ]
+			then
+				if [ -z "$PLOP_TEST_RESULT" ] || [ "$PLOP_TEST_RESULT" = "OK" ]
+				then
+					PLOP_RESULT_COLOR=$GREEN
+				else
+					PLOP_RESULT_COLOR=$RED
+				fi
+			fi
+			case $PLOP_TEST_RESULT in
+				"OK")
+					TESTS_OK=$(($TESTS_OK + 1));;
+				"KO")
+					TESTS_KO=$(($TESTS_KO + 1));;
+				"LK")
+					TESTS_LK=$(($TESTS_LK + 1));;
+			esac
+		else
+			TESTS_TO=$(($TESTS_TO + 1))
+			PLOP_TEST_RESULT="TO"
+			PLOP_RESULT_COLOR=$RED
+		fi
 		printf "\r${PLOP_RESULT_COLOR}# %0*d: %-*s [%s]\n${RESET_COLOR}" $PLOP_MIN_NUM_LENGTH $PLOP_TEST_NUM $(($PLOP_LINE_LENGTH - 9 - $PLOP_MIN_NUM_LENGTH)) "$PLOP_DESCRIPTION" "$PLOP_TEST_RESULT"
 	else
 		printf "\n"
