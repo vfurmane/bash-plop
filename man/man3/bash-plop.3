@@ -29,7 +29,56 @@ and executes the \fIcommand\fR passed in argument.
 The \fIdescription\fR can be passed using the variable \fBVF_DESCRIPTION\fR.
 The function returns the exit status of the executed command,
 and also stores it in the variable \fBVF_EXIT_STATUS\fR.
+If the test times out, the variable \fBVF_TIMED_OUT\fR will be set to 1.
+You can set a prefix command in the variable \fBVF_LEAK_CMD\fR:
+it is called like that because it can mainly used to check memory leaks.
+You can also decide to skip the test by setting the variable \fBVF_SKIP\fR to 1:
+the main purpose is to only print the test description
+without actually executing the test suite.
 .TP
 .B	vf_test_summary
 This function prints a summary of the previously executed command
 (if it failed or not).
+If the variable \fBVF_SKIP\fR is set to 1, you should still call this function
+to reset the test and print a newline.
+.SH	ENVIRONMENT
+.TP
+.B	VF_DESCRIPTION
+The description displayed for the test.
+.TP
+.B	VF_EXIT_STATUS
+The exit status of the tested command.
+.TP
+.B	VF_LEAK_CMD
+The prefix command in front of the the tested one.
+The main purpose is to use a program like \fIvalgrind\fR to check leaks.
+.TP
+.B	VF_LINE_LENGTH
+The length of the description line.
+.TP
+.B	VF_MIN_NUM_LENGHT
+The minimum length of the displayed test number on the description line.
+.TP
+.B	VF_RESULT_COLOR
+The color (in ANSI escape codes) in which the test result will be outputed.
+By default, if the variable \fBVF_TEST_RESULT\fR is set to "OK",
+the color is set to green, otherwise it is set to red.
+.TP
+.B	VF_SKIP
+If set to 1, the test will be skipped. Only the description will be displayed.
+.TP
+.B	VF_TEST_NUM
+The number of the test (automatically incremented in \fIvf_test_summary\fR).
+.TP
+.B	VF_TEST_OUTPUT
+The file in which the test output will be redirected (/dev/null by default).
+.TP
+.B	VF_TEST_RESULT
+The test result. It should be one of these "OK", "KO",
+"LK" (leak) or "TO" (timeout).
+.TP
+.B	VF_TIMED_OUT
+1 if the test has timed out.
+.TP
+.B	VF_TIMEOUT_SECONDS
+The time in seconds after which the test is killed. If set to 0, the test will never be killed.
