@@ -11,6 +11,9 @@ A bash testing framework suitable for 42 Projects.
 .B	plop_end
 .fi
 .nf
+.BI	"plop_commands_exist " commands
+.fi
+.nf
 .BI	"plop_test_command " command
 .fi
 .nf
@@ -27,6 +30,10 @@ This function should be called first. It initializes all needed variables.
 .B	plop_end
 This function should be called at the end of all tests.
 It prints a summary of all tests.
+.TP
+.B	plop_commands_exist
+This function check if the commands given in parameters as an array exist.
+If not, the test exits immediately.
 .TP
 .B	plop_test_command
 This function prints a \fIdescription\fR

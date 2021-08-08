@@ -69,6 +69,18 @@ plop_end()
 	fi
 }
 
+plop_commands_exist()
+{
+	for cmd in "$@"
+	do
+		if ! command -v $cmd > /dev/null 2>&1
+		then
+			plop_fatal_error "command '$cmd' is not installed..."
+		fi
+	done
+	return 0
+}
+
 plop_wait_for_timeout()
 {
 	sleep $PLOP_TIMEOUT_SECONDS
@@ -168,3 +180,6 @@ plop_pipe_cmd()
 	shift 1
 	echo $@ | $cmd
 }
+
+PLOP_COMMANDS=('sleep' 'kill' 'touch' 'rm')
+plop_commands_exist ${PLOP_COMMANDS[@]}
