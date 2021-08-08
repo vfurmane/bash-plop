@@ -29,11 +29,6 @@ vf_fatal_error()
 
 vf_init()
 {
-	commands_needed=("awk")
-	for command_needed in "${commands_needed[@]}"
-	do
-		command -v $command_needed > /dev/null 2>&1 || vf_fatal_error "'$command_needed' command not found..."
-	done
 	VF_INIT=1
 	TESTS_OK=0
 	TESTS_KO=0
@@ -78,6 +73,7 @@ vf_wait_for_timeout()
 	sleep $VF_TIMEOUT_SECONDS
 	if kill -0 $1 > /dev/null 2>&1
 	then
+		touch timed.out > /dev/null 2>&1
 		kill $1
 	fi
 }
@@ -94,9 +90,13 @@ vf_timeout_test()
 		$@
 	fi
 	VF_EXIT_STATUS=$?
-	if [ $VF_EXIT_STATUS -eq 143 ]
+	if [ -f timed.out ]
 	then
 		VF_TIMED_OUT=1
+		rm -f timed.out > /dev/null 2>&1
+	fi
+	if ! [ -z "$VF_TIMED_OUT" ] && [ $VF_TIMED_OUT -gt 0 ]
+	then
 		return 1
 	else
 		return 0
