@@ -9,7 +9,7 @@ YELLOW="\033[33m"
 BLUE="\033[34m"
 MAGENTA="\033[35m"
 
-vf_fatal_error()
+plop_fatal_error()
 {
 	if [ -z "$1" ]
 	then
@@ -27,28 +27,28 @@ vf_fatal_error()
 	exit $exit_status
 }
 
-vf_init()
+plop_init()
 {
-	VF_INIT=1
+	PLOP_INIT=1
 	TESTS_OK=0
 	TESTS_KO=0
 	TESTS_LK=0
 	TESTS_TO=0
-	VF_TEST_NUM=1
-	VF_TEST_OUTPUT="> /dev/null 2>&1"
-	VF_LINE_LENGTH=80
-	VF_MIN_NUM_LENGTH=2
-	VF_LEAK_CMD=""
-	VF_TIMEOUT_SECONDS=5
-	VF_TIMED_OUT=0
+	PLOP_TEST_NUM=1
+	PLOP_TEST_OUTPUT="> /dev/null 2>&1"
+	PLOP_LINE_LENGTH=80
+	PLOP_MIN_NUM_LENGTH=2
+	PLOP_LEAK_CMD=""
+	PLOP_TIMEOUT_SECONDS=5
+	PLOP_TIMED_OUT=0
 	exec 3>&1
 }
 
-vf_end()
+plop_end()
 {
-	if [ -z "$VF_INIT" ] || [ $VF_INIT -eq 0 ]
+	if [ -z "$PLOP_INIT" ] || [ $PLOP_INIT -eq 0 ]
 	then
-		vf_fatal_error "VF test framework not initialized..."
+		plop_fatal_error "VF test framework not initialized..."
 	fi
 	exec 1>&3
 	printf "\n"
@@ -68,9 +68,9 @@ vf_end()
 	fi
 }
 
-vf_wait_for_timeout()
+plop_wait_for_timeout()
 {
-	sleep $VF_TIMEOUT_SECONDS
+	sleep $PLOP_TIMEOUT_SECONDS
 	if kill -0 $1 > /dev/null 2>&1
 	then
 		touch timed.out > /dev/null 2>&1
@@ -78,24 +78,24 @@ vf_wait_for_timeout()
 	fi
 }
 
-vf_timeout_test()
+plop_timeout_test()
 {
-	if [ $VF_TIMEOUT_SECONDS -gt 0 ]
+	if [ $PLOP_TIMEOUT_SECONDS -gt 0 ]
 	then
 		$@ &
 		bg_process=$!
-		vf_wait_for_timeout $bg_process &
+		plop_wait_for_timeout $bg_process &
 		wait $bg_process
 	else
 		$@
 	fi
-	VF_EXIT_STATUS=$?
+	PLOP_EXIT_STATUS=$?
 	if [ -f timed.out ]
 	then
-		VF_TIMED_OUT=1
+		PLOP_TIMED_OUT=1
 		rm -f timed.out > /dev/null 2>&1
 	fi
-	if ! [ -z "$VF_TIMED_OUT" ] && [ $VF_TIMED_OUT -gt 0 ]
+	if ! [ -z "$PLOP_TIMED_OUT" ] && [ $PLOP_TIMED_OUT -gt 0 ]
 	then
 		return 1
 	else
@@ -103,33 +103,33 @@ vf_timeout_test()
 	fi
 }
 
-vf_test_command()
+plop_test_command()
 {
-	if [ -z "$VF_INIT" ] || [ $VF_INIT -eq 0 ]
+	if [ -z "$PLOP_INIT" ] || [ $PLOP_INIT -eq 0 ]
 	then
-		vf_fatal_error "VF test framework not initialized..."
+		plop_fatal_error "VF test framework not initialized..."
 	fi
-	printf "${BLUE}# %0*d: %-*s  []${RESET_COLOR}" $VF_MIN_NUM_LENGTH $VF_TEST_NUM $(($VF_LINE_LENGTH - 9 - $VF_MIN_NUM_LENGTH)) "$VF_DESCRIPTION"
-	VF_EXIT_STATUS=0
-	if ([ -z "$VF_SKIP" ] || [ $VF_SKIP -eq 0 ]) && [ $# -gt 0 ]
+	printf "${BLUE}# %0*d: %-*s  []${RESET_COLOR}" $PLOP_MIN_NUM_LENGTH $PLOP_TEST_NUM $(($PLOP_LINE_LENGTH - 9 - $PLOP_MIN_NUM_LENGTH)) "$PLOP_DESCRIPTION"
+	PLOP_EXIT_STATUS=0
+	if ([ -z "$PLOP_SKIP" ] || [ $PLOP_SKIP -eq 0 ]) && [ $# -gt 0 ]
 	then
-		vf_timeout_test $VF_LEAK_CMD $@ > $VF_TEST_OUTPUT 2>&1
+		plop_timeout_test $PLOP_LEAK_CMD $@ > $PLOP_TEST_OUTPUT 2>&1
 	fi
-	return $VF_EXIT_STATUS
+	return $PLOP_EXIT_STATUS
 }
 
-vf_test_summary()
+plop_test_summary()
 {
-	if [ -z "$VF_RESULT_COLOR" ]
+	if [ -z "$PLOP_RESULT_COLOR" ]
 	then
-		if [ -z "$VF_TEST_RESULT" ] || [ "$VF_TEST_RESULT" = "OK" ]
+		if [ -z "$PLOP_TEST_RESULT" ] || [ "$PLOP_TEST_RESULT" = "OK" ]
 		then
-			VF_RESULT_COLOR=$GREEN
+			PLOP_RESULT_COLOR=$GREEN
 		else
-			VF_RESULT_COLOR=$RED
+			PLOP_RESULT_COLOR=$RED
 		fi
 	fi
-	case $VF_TEST_RESULT in
+	case $PLOP_TEST_RESULT in
 		"OK")
 			TESTS_OK=$(($TESTS_OK + 1));;
 		"KO")
@@ -139,16 +139,16 @@ vf_test_summary()
 		"TO")
 			TESTS_TO=$(($TESTS_TO + 1));;
 	esac
-	if [ -z "$VF_SKIP" ] || [ $VF_SKIP -eq 0 ]
+	if [ -z "$PLOP_SKIP" ] || [ $PLOP_SKIP -eq 0 ]
 	then
-		printf "\r${VF_RESULT_COLOR}# %0*d: %-*s [%s]\n${RESET_COLOR}" $VF_MIN_NUM_LENGTH $VF_TEST_NUM $(($VF_LINE_LENGTH - 9 - $VF_MIN_NUM_LENGTH)) "$VF_DESCRIPTION" "$VF_TEST_RESULT"
+		printf "\r${PLOP_RESULT_COLOR}# %0*d: %-*s [%s]\n${RESET_COLOR}" $PLOP_MIN_NUM_LENGTH $PLOP_TEST_NUM $(($PLOP_LINE_LENGTH - 9 - $PLOP_MIN_NUM_LENGTH)) "$PLOP_DESCRIPTION" "$PLOP_TEST_RESULT"
 	else
 		printf "\n"
 	fi
-	VF_TEST_NUM=$(($VF_TEST_NUM + 1))
-	VF_TEST_OUTPUT="> /dev/null 2>&1"
-	VF_DESCRIPTION=""
-	VF_SKIP=0
-	VF_TIMED_OUT=0
-	VF_RESULT_COLOR=""
+	PLOP_TEST_NUM=$(($PLOP_TEST_NUM + 1))
+	PLOP_TEST_OUTPUT="> /dev/null 2>&1"
+	PLOP_DESCRIPTION=""
+	PLOP_SKIP=0
+	PLOP_TIMED_OUT=0
+	PLOP_RESULT_COLOR=""
 }
