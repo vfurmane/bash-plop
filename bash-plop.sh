@@ -35,7 +35,8 @@ plop_init()
 	TESTS_LK=0
 	TESTS_TO=0
 	PLOP_TEST_NUM=1
-	PLOP_TEST_OUTPUT="> /dev/null 2>&1"
+	PLOP_TEST_INPUT="/dev/null"
+	PLOP_TEST_OUTPUT="/dev/null"
 	PLOP_LINE_LENGTH=80
 	PLOP_MIN_NUM_LENGTH=2
 	PLOP_LEAK_CMD=""
@@ -82,12 +83,12 @@ plop_timeout_test()
 {
 	if [ $PLOP_TIMEOUT_SECONDS -gt 0 ]
 	then
-		$@ &
+		"$@" < $PLOP_TEST_INPUT &
 		bg_process=$!
 		plop_wait_for_timeout $bg_process &
 		wait $bg_process
 	else
-		$@
+		"$@" < $PLOP_TEST_INPUT
 	fi
 	PLOP_EXIT_STATUS=$?
 	if [ -f timed.out ]
@@ -114,7 +115,7 @@ plop_test_command()
 	PLOP_EXIT_STATUS=0
 	if ([ -z "$PLOP_SKIP" ] || [ $PLOP_SKIP -eq 0 ]) && [ $# -gt 0 ]
 	then
-		plop_timeout_test $PLOP_LEAK_CMD $@ > $PLOP_TEST_OUTPUT 2>&1
+		plop_timeout_test $PLOP_LEAK_CMD "$@" > $PLOP_TEST_OUTPUT 2>&1
 	fi
 	return $PLOP_EXIT_STATUS
 }
@@ -153,9 +154,17 @@ plop_test_summary()
 	fi
 	command -v plop_teardown > /dev/null 2>&1 && plop_teardown
 	PLOP_TEST_NUM=$(($PLOP_TEST_NUM + 1))
-	PLOP_TEST_OUTPUT="> /dev/null 2>&1"
+	PLOP_TEST_INPUT="/dev/null"
+	PLOP_TEST_OUTPUT="/dev/null"
 	PLOP_DESCRIPTION=""
 	PLOP_SKIP=0
 	PLOP_TIMED_OUT=0
 	PLOP_RESULT_COLOR=""
+}
+
+plop_pipe_cmd()
+{
+	cmd=$1
+	shift 1
+	echo $@ | $cmd
 }

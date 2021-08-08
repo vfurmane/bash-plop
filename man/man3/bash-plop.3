@@ -10,9 +10,14 @@ A bash testing framework suitable for 42 Projects.
 .nf
 .B	plop_end
 .fi
+.nf
 .BI	"plop_test_command " command
+.fi
 .nf
 .B	plop_test_summary
+.fi
+.nf
+.BI	"plop_pipe_cmd " command1 " " command2
 .fi
 .SH	DESCRIPTION
 .TP
@@ -45,6 +50,11 @@ If the user defined a \fIplop_teardown\fR function,
 it will be called at the end.
 If the variable \fBPLOP_SKIP\fR is set to 1, you should still call this function
 to reset the test and print a newline.
+.TP
+.B	plop_pipe_cmd
+This function allows you to pipe \fIcommand1\fR into \fIcommand2\fR.
+It is useful when you want to use bash pipes in the test,
+because it is not possible to store that in a string.
 .SH	ENVIRONMENT
 .TP
 .B	PLOP_DESCRIPTION
