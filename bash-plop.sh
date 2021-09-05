@@ -35,6 +35,7 @@ plop_init()
 	TESTS_LK=0
 	TESTS_TO=0
 	PLOP_TEST_NUM=1
+	PLOP_TEST_RESULT="OK"
 	PLOP_TEST_INPUT="/dev/null"
 	PLOP_TEST_OUTPUT="/dev/null"
 	PLOP_LINE_LENGTH=80
@@ -166,6 +167,7 @@ plop_test_summary()
 	fi
 	command -v plop_teardown > /dev/null 2>&1 && plop_teardown
 	PLOP_TEST_NUM=$(($PLOP_TEST_NUM + 1))
+	PLOP_TEST_RESULT="OK"
 	PLOP_TEST_INPUT="/dev/null"
 	PLOP_TEST_OUTPUT="/dev/null"
 	PLOP_DESCRIPTION=""
