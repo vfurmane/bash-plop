@@ -181,5 +181,4 @@ plop_pipe_cmd()
 	echo $@ | $cmd
 }
 
-PLOP_COMMANDS=('sleep' 'kill' 'touch' 'rm')
-plop_commands_exist ${PLOP_COMMANDS[@]}
+plop_commands_exist 'touch' 'rm' 'sleep'
