@@ -50,7 +50,7 @@ plop_end()
 {
 	if [ -z "$PLOP_INIT" ] || [ $PLOP_INIT -eq 0 ]
 	then
-		plop_fatal_error "VF test framework not initialized..."
+		plop_fatal_error "bash-plop not initialized..."
 	fi
 	exec 1>&3
 	printf "\n"
@@ -121,7 +121,7 @@ plop_test_command()
 {
 	if [ -z "$PLOP_INIT" ] || [ $PLOP_INIT -eq 0 ]
 	then
-		plop_fatal_error "VF test framework not initialized..."
+		plop_fatal_error "bash-plop not initialized..."
 	fi
 	printf "${BLUE}# %0*d: %-*s  []${RESET_COLOR}" $PLOP_MIN_NUM_LENGTH $PLOP_TEST_NUM $(($PLOP_LINE_LENGTH - 9 - $PLOP_MIN_NUM_LENGTH)) "$PLOP_DESCRIPTION"
 	command -v plop_setup > /dev/null 2>&1 && plop_setup
