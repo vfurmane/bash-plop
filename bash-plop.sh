@@ -41,6 +41,8 @@ plop_init()
 	PLOP_LINE_LENGTH=80
 	PLOP_MIN_NUM_LENGTH=2
 	PLOP_LEAK_CMD=""
+	PLOP_SKIP=0
+	PLOP_SKIP_LEAKS=0
 	PLOP_TIMEOUT_SECONDS=5
 	PLOP_TIMED_OUT=0
 	exec 3>&1
@@ -128,7 +130,12 @@ plop_test_command()
 	PLOP_EXIT_STATUS=0
 	if ([ -z "$PLOP_SKIP" ] || [ $PLOP_SKIP -eq 0 ]) && [ $# -gt 0 ]
 	then
-		plop_timeout_test $PLOP_LEAK_CMD "$@" > $PLOP_TEST_OUTPUT 2>&1
+		if [ -z "$PLOP_SKIP_LEAKS" ] || [ "$PLOP_SKIP_LEAKS" -eq 0 ]
+		then
+			plop_timeout_test $PLOP_LEAK_CMD "$@" > $PLOP_TEST_OUTPUT 2>&1
+		else
+			plop_timeout_test "$@" > $PLOP_TEST_OUTPUT 2>&1
+		fi
 	fi
 	return $PLOP_EXIT_STATUS
 }
@@ -172,7 +179,9 @@ plop_test_summary()
 	PLOP_TEST_OUTPUT="/dev/null"
 	PLOP_DESCRIPTION=""
 	PLOP_SKIP=0
+	PLOP_SKIP_LEAKS=0
 	PLOP_TIMED_OUT=0
+	PLOP_TIMEOUT_SECONDS=5
 	PLOP_RESULT_COLOR=""
 }
 
