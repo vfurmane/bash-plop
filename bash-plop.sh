@@ -76,13 +76,13 @@ plop_ask_config()
 {
 	message=$1
 	default_value=$2
-	printf "%s" $message
+	echo -n $message
 	if [ -n "$default_value" ]
 	then
-		printf " (%s)" $default_value
+		echo -n " ($default_value)"
 	fi
-	printf ": "
-	read answer
+	echo -n ": "
+	read -e answer
 	if [ -z "$answer" ]
 	then
 		if [ -z "$default_value" ]
