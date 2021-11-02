@@ -72,6 +72,31 @@ plop_end()
 	fi
 }
 
+plop_ask_config()
+{
+	message=$1
+	default_value=$2
+	printf "%s" $message
+	if [ -n "$default_value" ]
+	then
+		printf " (%s)" $default_value
+	fi
+	printf ": "
+	read answer
+	if [ -z "$answer" ]
+	then
+		if [ -z "$default_value" ]
+		then
+			printf "${RED}Answer cannot be empty... Try again !${RESET_COLOR}\n"
+			plop_ask_config $message $default_value
+			return
+		else
+			answer=$default_value
+		fi
+	fi
+	PLOP_CONFIG_ANSWER=$answer
+}
+
 plop_commands_exist()
 {
 	for cmd in "$@"
